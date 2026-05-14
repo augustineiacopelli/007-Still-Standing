@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Still Standing | AppADay #007</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f5f0e8;
+    --gold: #c9a96e;
+    --gold-light: #e8d4a8;
+    --amber: #d4874a;
+    --dark: #2a1f17;
+    --text: #3d2e22;
+    --muted: #8a7060;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, #5c3520 0%, #2a1f17 55%, #1a1210 100%);
+    background-color: var(--dark);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(212,135,74,0.18) 0%, rgba(201,169,110,0.08) 40%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: flicker 4s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes flicker {
+    0%   { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    33%  { opacity: 1;   transform: translateX(-49%) scale(1.03); }
+    66%  { opacity: 0.9; transform: translateX(-51%) scale(0.98); }
+    100% { opacity: 1;   transform: translateX(-50%) scale(1.02); }
+  }
+
+  .site-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(201,169,110,0.12);
+    background: rgba(26,18,16,0.4);
+    backdrop-filter: blur(8px);
+  }
+
+  .app-badge {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .home-link {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .home-link:hover { color: var(--gold-light); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flame {
+    font-size: 32px;
+    margin-bottom: 24px;
+    animation: flamePulse 3s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 12px rgba(212,135,74,0.8));
+  }
+  @keyframes flamePulse {
+    from { filter: drop-shadow(0 0 8px rgba(212,135,74,0.6)); transform: scale(1); }
+    to   { filter: drop-shadow(0 0 20px rgba(212,135,74,1));   transform: scale(1.05); }
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
+    color: var(--cream);
+    line-height: 1.1;
+    text-align: center;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 52px;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  /* ── Card flip container ── */
+  .flip-container {
+    width: 100%;
+    perspective: 1200px;
+  }
+
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+
+  .flip-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-front,
+  .flip-back {
+    width: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 2px;
+  }
+
+  .flip-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotateY(180deg);
+    min-height: 100%;
+  }
+
+  /* Keep the container tall enough for whichever face is taller */
+  .flip-container { min-height: 260px; }
+
+  /* ── Front face: input card ── */
+  .card {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid rgba(201,169,110,0.2);
+    border-radius: 2px;
+    padding: 36px 32px;
+    backdrop-filter: blur(4px);
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(26,18,16,0.5);
+    border: 1px solid rgba(201,169,110,0.15);
+    border-radius: 1px;
+    padding: 18px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.7;
+    resize: vertical;
+    min-height: 130px;
+    transition: border-color 0.3s;
+    outline: none;
+  }
+  textarea::placeholder { color: rgba(245,240,232,0.3); font-style: italic; }
+  textarea:focus { border-color: rgba(201,169,110,0.45); }
+
+  .btn {
+    margin-top: 24px;
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, rgba(201,169,110,0.9), rgba(212,135,74,0.85));
+    border: none;
+    border-radius: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dark);
+    cursor: pointer;
+    transition: opacity 0.25s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.12);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn:active { transform: scale(0.99); }
+
+  /* ── Back face: response card ── */
+  .response-card {
+    background: rgba(201,169,110,0.07);
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: 2px;
+    padding: 36px 32px;
+    position: relative;
+  }
+
+  .response-card::before {
+    content: '\201C';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.25;
+  }
+
+  .response-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.05rem, 3.5vw, 1.3rem);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.85;
+  }
+
+  .response-verse {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201,169,110,0.15);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .response-verse cite {
+    display: block;
+    margin-top: 6px;
+    font-style: normal;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .try-again {
+    background: transparent;
+    border: 1px solid rgba(201,169,110,0.25);
+    padding: 12px 28px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    border-radius: 1px;
+  }
+  .try-again:hover { color: var(--gold-light); border-color: rgba(201,169,110,0.5); }
+
+  @media (max-width: 480px) {
+    main { padding: 44px 16px 60px; }
+    .card, .response-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb"></div>
+
+<header class="site-header">
+  <span class="app-badge">AppADay &middot; #007</span>
+  <a class="home-link" href="../index.html">&larr; Portfolio</a>
+</header>
+
+<main>
+  <div class="flame">&#x1F56F;&#xFE0F;</div>
+  <h1>Still Standing</h1>
+  <p class="subtitle">Tell me what you are carrying.<br>Let me remind you who you are.</p>
+
+  <div class="flip-container">
+    <div class="flip-inner" id="flipInner">
+
+      <!-- Front: input -->
+      <div class="flip-front">
+        <div class="card">
+          <label for="userInput">What is weighing on your heart today?</label>
+          <textarea id="userInput" placeholder="You do not have to have the right words. Just say what is true..." rows="5"></textarea>
+          <button class="btn" onclick="getEncouragement()">Receive a word of encouragement</button>
+        </div>
+      </div>
+
+      <!-- Back: encouragement -->
+      <div class="flip-back">
+        <div class="response-card">
+          <p class="response-text" id="responseText"></p>
+          <div class="response-verse" id="responseVerse"></div>
+        </div>
+        <div class="actions">
+          <button class="try-again" onclick="drawAnother()">Draw another word</button>
+          <button class="try-again" onclick="reset()">Share something else</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+var messages = [
+  { text: "You have survived every hard day life has handed you so far. That is not luck. That is the quiet, unshakeable strength living inside you, even when you cannot feel it.", verse: "The Lord is my strength and my shield; my heart trusts in him, and he helps me.", ref: "Psalm 28:7" },
+  { text: "This is not the end of your story. It is one hard chapter in a long and beautiful book, and the Author already knows how it turns out.", verse: "For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11" },
+  { text: "Grief and loss do not mean you are broken. They mean you loved something real. That love does not disappear when circumstances change. It transforms into the strength that carries you forward.", verse: "He heals the brokenhearted and binds up their wounds.", ref: "Psalm 147:3" },
+  { text: "You are allowed to feel the weight of this. You are allowed to sit in it without immediately fixing it or explaining it away. Feeling is not weakness. It is honesty, and honesty is where healing begins.", verse: "Cast all your anxiety on him because he cares for you.", ref: "1 Peter 5:7" },
+  { text: "The version of you on the other side of this season will look back and know, with absolute certainty, that you were braver than you ever gave yourself credit for.", verse: "Be strong and courageous. Do not be afraid; do not be discouraged.", ref: "Joshua 1:9" },
+  { text: "You are more capable than the fear is telling you right now. Fear is loud, but it is not accurate. Your history of endurance is the real evidence.", verse: "For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.", ref: "2 Timothy 1:7" },
+  { text: "There are people in your life who would move mountains for you if they knew what you were carrying. You do not have to carry it alone. Letting someone in is not burden. It is trust, and trust is a gift.", verse: "Two are better than one, because they have a good return for their labor.", ref: "Ecclesiastes 4:9" },
+  { text: "Hard seasons reveal something that comfortable ones never can: what you are actually made of. And what you are made of is something remarkable.", verse: "We also glory in our sufferings, because we know that suffering produces perseverance; perseverance, character; and character, hope.", ref: "Romans 5:3-4" },
+  { text: "You are not behind. You are not too late. You are not less than. You are exactly where you need to be, learning what this moment has to teach you.", verse: "And we know that in all things God works for the good of those who love him.", ref: "Romans 8:28" },
+  { text: "The fact that you are still here, still trying, still showing up even on the days it costs you everything, is one of the most courageous things a person can do.", verse: "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.", ref: "Galatians 6:9" },
+  { text: "Your worth is not measured by your productivity, your output, your title, or your circumstances. It is fixed. It was decided before you drew your first breath and nothing that happens can revise it.", verse: "For you created my inmost being; you knit me together in my mother's womb. I praise you because I am fearfully and wonderfully made.", ref: "Psalm 139:13-14" },
+  { text: "This thing that feels impossible right now has a way through. You may not see it yet, but the path exists. Keep walking. The light comes.", verse: "Your word is a lamp for my feet, a light on my path.", ref: "Psalm 119:105" },
+  { text: "You have been through things that would have stopped other people. That is not a small thing. That is testimony written in your bones.", verse: "I can do all this through him who gives me strength.", ref: "Philippians 4:13" },
+  { text: "Rest is not surrender. Taking a breath is not giving up. Knowing when to pause and recover is one of the wisest things a strong person can do.", verse: "He makes me lie down in green pastures, he leads me beside quiet waters, he refreshes my soul.", ref: "Psalm 23:2-3" },
+  { text: "The people who love you see something in you that the hard days are temporarily hiding from your own view. Trust their vision of you until you can see it again for yourself.", verse: "Above all, love each other deeply, because love covers over a multitude of sins.", ref: "1 Peter 4:8" },
+  { text: "You are not the sum of your setbacks. You are the sum of every time you got back up, every time you chose to try again, every time you refused to let the hard thing be the final word.", verse: "Though he may stumble, he will not fall, for the Lord upholds him with his hand.", ref: "Psalm 37:24" },
+  { text: "Sometimes the most faithful thing you can do is simply make it to the end of the day. That counts. That is enough. Tomorrow is its own gift.", verse: "Because of the Lord's great love we are not consumed, for his compassions never fail. They are new every morning.", ref: "Lamentations 3:22-23" },
+  { text: "You have a depth that most people never fully see. The difficulty you are facing right now is drawing something out of you that will serve others for years to come.", verse: "Praise be to the God and Father of our Lord Jesus Christ, the Father of compassion and the God of all comfort, who comforts us in all our troubles, so that we can comfort those in any trouble.", ref: "2 Corinthians 1:3-4" },
+  { text: "Your feelings are valid. All of them. The anger, the grief, the confusion, the fear. They are not signs that something is wrong with you. They are signs that you are human and that you care.", verse: "The Lord is close to the brokenhearted and saves those who are crushed in spirit.", ref: "Psalm 34:18" },
+  { text: "You were not designed for a small life. This hard season is not evidence that you aimed too high. It is part of the formation that makes you ready for what is ahead.", verse: "For it is God who works in you to will and to act in order to fulfill his good purpose.", ref: "Philippians 2:13" },
+  { text: "There is no version of strength that looks the same every day. Some days strength looks like fighting. Some days it looks like resting. Some days it just looks like breathing. All of it counts.", verse: "My grace is sufficient for you, for my power is made perfect in weakness.", ref: "2 Corinthians 12:9" },
+  { text: "The door that just closed was not the only door. That is one of the hardest truths to hold in the moment, but it is true. Something is being redirected, not ended.", verse: "See, I am doing a new thing! Now it springs up; do you not perceive it?", ref: "Isaiah 43:19" },
+  { text: "You are someone's anchor. Someone's safe place. Someone's reason. Even when you cannot feel your own worth, look at the way you are woven into the lives around you.", verse: "A friend loves at all times, and a brother is born for a time of adversity.", ref: "Proverbs 17:17" },
+  { text: "Disappointment is real and it deserves to be named. But disappointment is not destiny. It is a moment. Your life is composed of far more than this one moment.", verse: "Hope does not put us to shame, because God's love has been poured out into our hearts through the Holy Spirit.", ref: "Romans 5:5" },
+  { text: "You have already done hard things. Quietly, without applause, without anyone fully knowing the cost. That history is proof. You have the capacity for this too.", verse: "Have I not commanded you? Be strong and courageous.", ref: "Joshua 1:9" },
+  { text: "The weight you are carrying says something about how seriously you take the things that matter. That is not a flaw. That is integrity. And integrity is rare.", verse: "The integrity of the upright guides them.", ref: "Proverbs 11:3" },
+  { text: "Uncertainty is uncomfortable, but it is not dangerous. You do not need to know how it ends to take the next right step. Just the next one. That is all that is asked of you right now.", verse: "Trust in the Lord with all your heart and lean not on your own understanding.", ref: "Proverbs 3:5" },
+  { text: "You are not too much. You have never been too much. You are exactly the right amount of everything, and the right people will always see that.", verse: "You are altogether beautiful, my darling; there is no flaw in you.", ref: "Song of Solomon 4:7" },
+  { text: "This season will produce something in you that could not have come any other way. You will look back and see it clearly, even if right now it only looks like loss.", verse: "And the God of all grace, who called you to his eternal glory in Christ, after you have suffered a little while, will himself restore you and make you strong, firm and steadfast.", ref: "1 Peter 5:10" },
+  { text: "You are deeply loved. Not when you get it together. Not when things improve. Right now, exactly as you are, in the middle of the mess and the uncertainty. Deeply loved.", verse: "But God demonstrates his own love for us in this: While we were still sinners, Christ died for us.", ref: "Romans 5:8" },
+  { text: "You do not have to have it figured out. Figuring it out is not a prerequisite for moving forward. Sometimes you just walk and the clarity comes along the way.", verse: "The path of the righteous is like the morning sun, shining ever brighter till the full light of day.", ref: "Proverbs 4:18" },
+  { text: "The very thing that feels like your greatest weakness right now may be the thing that makes you most capable of helping someone else through their own version of this one day.", verse: "He comforts us in all our troubles, so that we can comfort those in any trouble with the comfort we ourselves receive from God.", ref: "2 Corinthians 1:4" },
+  { text: "You deserve gentleness. Especially from yourself. Talk to yourself the way you would talk to someone you love who is going through exactly what you are going through.", verse: "Love your neighbor as yourself.", ref: "Matthew 22:39" },
+  { text: "Strength is not the absence of fear. Strength is deciding that something matters more than the fear. You have done that more times than you know.", verse: "When I am afraid, I put my trust in you.", ref: "Psalm 56:3" },
+  { text: "The version of you that made it through the last impossible thing is the same version that is going to make it through this one. You already know how this goes.", verse: "I have told you these things, so that in me you may have peace. In this world you will have trouble. But take heart! I have overcome the world.", ref: "John 16:33" },
+  { text: "You matter to more people than you realize. Your presence in this world creates a warmth that others feel even when you cannot feel it yourself.", verse: "You are the light of the world. A town built on a hill cannot be hidden.", ref: "Matthew 5:14" },
+  { text: "Asking for help is not a sign that you have failed. It is a sign that you understand your own humanity and that you are wise enough to reach for what you need.", verse: "Plans fail for lack of counsel, but with many advisers they succeed.", ref: "Proverbs 15:22" },
+  { text: "You do not have to earn rest. You do not have to deserve peace. These are not rewards for people who have it together. They are gifts available to you right now.", verse: "Come to me, all you who are weary and burdened, and I will give you rest.", ref: "Matthew 11:28" },
+  { text: "Your story is not over. Not even close. The hardest chapters are often the ones that set up everything that comes next. Keep turning the pages.", verse: "Being confident of this, that he who began a good work in you will carry it on to completion.", ref: "Philippians 1:6" },
+  { text: "You are not alone in this room, even when it feels that way. The love of the people who care for you does not disappear when you shut the door. It waits.", verse: "Never will I leave you; never will I forsake you.", ref: "Hebrews 13:5" },
+  { text: "There is a resilience in you that was built by every hard thing you have already survived. It is not theoretical. It is proven. You carry the evidence.", verse: "We are hard pressed on every side, but not crushed; perplexed, but not in despair.", ref: "2 Corinthians 4:8" },
+  { text: "Your tears are not weakness. They are the language of a heart that is still open, still feeling, still engaged with life. That openness is a gift, not a liability.", verse: "Those who sow with tears will reap with songs of joy.", ref: "Psalm 126:5" },
+  { text: "One day this will be a story you tell someone who needs to hear it. You will not be able to help them without having lived through exactly this. There is a purpose being woven here.", verse: "And we know that in all things God works for the good of those who love him.", ref: "Romans 8:28" },
+  { text: "You have people who are proud of you even now, in the struggle, before the resolution. Not because of what you achieve but because of who you are.", verse: "Therefore, there is now no condemnation for those who are in Christ Jesus.", ref: "Romans 8:1" },
+  { text: "The things you are worried about losing are not the things that define you. What defines you runs much deeper than any circumstance can reach.", verse: "Neither height nor depth, nor anything else in all creation, will be able to separate us from the love of God.", ref: "Romans 8:39" },
+  { text: "You are in the middle of something, which means you are not at the end. The middle feels endless, but middles have exits. You will find yours.", verse: "Even though I walk through the darkest valley, I will fear no evil, for you are with me.", ref: "Psalm 23:4" },
+  { text: "The courage it takes to face what you are facing without falling apart is extraordinary. You may not be able to see that from the inside. But it is extraordinary.", verse: "She is clothed with strength and dignity, and she laughs without fear of the future.", ref: "Proverbs 31:25" },
+  { text: "Not every door closes because you did something wrong. Some doors close because something better requires a different entrance. The closing is not the judgment you fear it is.", verse: "See, I have placed before you an open door that no one can shut.", ref: "Revelation 3:8" },
+  { text: "You were made for more than survival, but survival is allowed to be enough for today. Just get to tomorrow. That is the whole assignment right now.", verse: "Therefore do not worry about tomorrow, for tomorrow will worry about itself. Each day has enough trouble of its own.", ref: "Matthew 6:34" },
+  { text: "The love you give to others with such consistency and generosity, you also deserve to receive. Let the people who love you love you back right now. Let them in.", verse: "We love because he first loved us.", ref: "1 John 4:19" },
+  { text: "You are not defined by your worst day, your worst year, or your worst season. You are defined by something that those things cannot touch.", verse: "I have called you by name; you are mine.", ref: "Isaiah 43:1" },
+  { text: "This difficulty is real. It is not in your head. It is not something to push through with a better attitude. It is hard because it is hard. And you are handling it.", verse: "The Lord is a refuge for the oppressed, a stronghold in times of trouble.", ref: "Psalm 9:9" },
+  { text: "You have fought battles no one else saw and won victories no one else knows about. Your private courage is just as real as any public triumph.", verse: "The Lord your God is with you, the Mighty Warrior who saves.", ref: "Zephaniah 3:17" },
+  { text: "Even in the hardest moments, there is something in you that keeps reaching for light. That instinct toward hope is one of the most beautiful things about you.", verse: "The light shines in the darkness, and the darkness has not overcome it.", ref: "John 1:5" },
+  { text: "Your value is not conditional. It does not rise and fall with your circumstances, your productivity, your relationships, or your success. It simply is.", verse: "Are not five sparrows sold for two pennies? Yet not one of them is forgotten by God. You are worth more than many sparrows.", ref: "Luke 12:6-7" },
+  { text: "The grief you are carrying is proportional to how much you loved, how hard you worked, how deeply you hoped. Grief like this is evidence of a life fully lived.", verse: "Blessed are those who mourn, for they will be comforted.", ref: "Matthew 5:4" },
+  { text: "You are someone who keeps showing up. For others, for responsibilities, for life itself, even when it costs you. That kind of faithfulness is rare and it matters.", verse: "Well done, good and faithful servant.", ref: "Matthew 25:21" },
+  { text: "The path forward may not be clear yet, but your feet know how to walk. Take one step. Then the next. Clarity comes to those who are already moving.", verse: "Your ears will hear a voice behind you, saying, this is the way; walk in it.", ref: "Isaiah 30:21" },
+  { text: "You are allowed to not be okay right now. You do not have to perform wellness for anyone. The people who love you want the real you, including the version that is struggling.", verse: "The Lord is near to all who call on him, to all who call on him in truth.", ref: "Psalm 145:18" },
+  { text: "There is something on the other side of this that you cannot yet imagine. Hold on for it. Not because you can see it, but because you have learned to trust the One who can.", verse: "Now faith is confidence in what we hope for and assurance about what we do not see.", ref: "Hebrews 11:1" },
+  { text: "You have given so much of yourself for so long. It is not weakness to be tired. It is the natural consequence of caring deeply. Rest is not abandonment. Rest is wisdom.", verse: "He gives strength to the weary and increases the power of the weak.", ref: "Isaiah 40:29" },
+  { text: "The fact that you are still here, still reaching for hope, means the hope has not gone out in you. That matters more than you know.", verse: "May the God of hope fill you with all joy and peace as you trust in him.", ref: "Romans 15:13" },
+  { text: "You are growing even when it feels like you are only enduring. Growth and pain wear the same clothes. What feels like breaking down is often breaking open.", verse: "I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit.", ref: "John 15:5" },
+  { text: "Someone in your life is watching how you handle this, drawing strength from your example without you knowing it. Your endurance is already encouraging someone else.", verse: "Let your light shine before others, that they may see your good deeds.", ref: "Matthew 5:16" },
+  { text: "You do not have to have the answers. The questions are allowed to stay questions for now. Living faithfully inside uncertainty is one of the highest forms of trust.", verse: "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.", ref: "Proverbs 3:5-6" },
+  { text: "Every single day you have shown up, even imperfectly, even exhausted, even unsure, counts. It accumulates. You are further along than the hard days make it feel.", verse: "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.", ref: "Galatians 6:9" },
+  { text: "You carry a quiet strength that most people never get a full view of. It shows up in small moments, in the way you hold things together, in the love you give without announcement.", verse: "Charm is deceptive, and beauty is fleeting; but a woman who fears the Lord is to be praised.", ref: "Proverbs 31:30" },
+  { text: "This is hard and you are doing it anyway. That combination, hard thing plus doing it anyway, is the exact definition of courage.", verse: "Be on your guard; stand firm in the faith; be courageous; be strong.", ref: "1 Corinthians 16:13" },
+  { text: "The love in your life is real. The good things you have built are real. The hard season does not erase them. They are still there, steady under the weight of this moment.", verse: "Love never fails.", ref: "1 Corinthians 13:8" },
+  { text: "You have a future. Not despite everything you are walking through, but woven through it and beyond it. The future is still yours.", verse: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11" },
+  { text: "You are someone worth fighting for. Not just by others, but by yourself. Fight for your own rest, your own joy, your own healing. You deserve your own advocacy.", verse: "Do you not know that your bodies are temples of the Holy Spirit, who is in you, whom you have received from God?", ref: "1 Corinthians 6:19" },
+  { text: "The things you fear losing the most are often the things most worth fighting to protect. But even if something is lost, it does not take you with it. You remain.", verse: "The Lord himself goes before you and will be with you; he will never leave you nor forsake you.", ref: "Deuteronomy 31:8" },
+  { text: "You have loved people through their worst. You have stayed when it was hard. You deserve that same faithfulness from the people in your life, and from yourself.", verse: "Be devoted to one another in love.", ref: "Romans 12:10" },
+  { text: "There is more ahead of you than behind you. This is not wishful thinking. It is what lives in the architecture of a life still being written.", verse: "The Lord will perfect that which concerns me.", ref: "Psalm 138:8" },
+  { text: "You are not invisible. Your pain is not invisible. The things you carry in silence are seen by the One who made you, and they matter.", verse: "You have kept count of my tossings; put my tears in your bottle.", ref: "Psalm 56:8" },
+  { text: "One day you will sit across from someone falling apart and you will know exactly what to say because you lived through this. Your suffering is becoming your ministry.", verse: "Carry each other's burdens, and in this way you will fulfill the law of Christ.", ref: "Galatians 6:2" },
+  { text: "The goodness in your life is not cancelled by the hard thing. Both can be true at the same time. Holding both is not denial. It is the full picture.", verse: "Surely your goodness and love will follow me all the days of my life.", ref: "Psalm 23:6" },
+  { text: "You are someone's answered prayer. Someone asked for you, specifically, in their life. Your presence is a gift that arrived in answer to a need you may never fully know about.", verse: "Every good and perfect gift is from above.", ref: "James 1:17" },
+  { text: "Even if everything around you feels unstable, there is a foundation under your feet that cannot be moved. You are standing on something solid even when you cannot feel it.", verse: "The rain came down, the streams rose, and the winds blew and beat against that house; yet it did not fall, because it had its foundation on the rock.", ref: "Matthew 7:25" },
+  { text: "You are in a season that is asking a great deal of you. But seasons end. They always end. The asking will not go on forever, and what you are building through this endurance will last.", verse: "For our light and momentary troubles are achieving for us an eternal glory that far outweighs them all.", ref: "2 Corinthians 4:17" },
+  { text: "The relationship you have with yourself matters. You deserve your own kindness, your own patience, your own belief. Start there. Be on your own side.", verse: "Above all else, guard your heart, for everything you do flows from it.", ref: "Proverbs 4:23" },
+  { text: "You have carried this with a grace that has not gone unnoticed, even if no one has said it out loud. The quiet dignity you have maintained through difficulty is remarkable.", verse: "The Lord will fight for you; you need only to be still.", ref: "Exodus 14:14" },
+  { text: "Something is being built in you right now that cannot be purchased or borrowed. It can only come through lived experience, through this, through what you are enduring right now.", verse: "Consider it pure joy, my brothers and sisters, whenever you face trials of many kinds, because you know that the testing of your faith produces perseverance.", ref: "James 1:2-3" },
+  { text: "You are loved in a way that does not require you to perform, to produce, or to hold it together. You are loved in your exact current state. That is the whole deal.", verse: "For God so loved the world that he gave his one and only Son.", ref: "John 3:16" },
+  { text: "The heaviness you feel right now is real, but it is not permanent. It will lift. Seasons change. You have watched this happen before and you will watch it happen again.", verse: "Weeping may stay for the night, but rejoicing comes in the morning.", ref: "Psalm 30:5" },
+  { text: "You are exactly the person the people who love you need you to be, imperfections included. You do not need to be fixed to be worthy of love. You are already worthy.", verse: "I have loved you with an everlasting love; I have drawn you with unfailing kindness.", ref: "Jeremiah 31:3" },
+  { text: "Some battles are won not in a single dramatic moment but in the accumulated faithfulness of ordinary days. You are winning yours one faithful day at a time.", verse: "The Lord bless you and keep you; the Lord make his face shine on you and be gracious to you.", ref: "Numbers 6:24-25" },
+  { text: "You have more allies than you know. More people in your corner than you can see from where you are standing right now. You are not alone in this fight.", verse: "If God is for us, who can be against us?", ref: "Romans 8:31" },
+  { text: "This is a hard chapter. But you are the author of how you respond to it, and every response you have chosen so far has shown someone of remarkable character.", verse: "She opens her mouth with wisdom, and the teaching of kindness is on her tongue.", ref: "Proverbs 31:26" },
+  { text: "The smallest acts of courage count. Getting out of bed. Making the call. Asking for help. Showing up one more time. These small acts are not small at all.", verse: "Do not despise these small beginnings, for the Lord rejoices to see the work begin.", ref: "Zechariah 4:10" },
+  { text: "You were chosen for this life, including this chapter of it. That does not make it easy. It makes it meaningful. There is a difference, and the difference matters.", verse: "You did not choose me, but I chose you and appointed you so that you might go and bear fruit.", ref: "John 15:16" },
+  { text: "The person you are becoming through this difficulty is someone you will be deeply proud of. You cannot see it yet, but it is happening right now, in the way you are holding on.", verse: "We rejoice in our sufferings, knowing that suffering produces endurance, and endurance produces character, and character produces hope.", ref: "Romans 5:3-4" },
+  { text: "Your presence in the world is a net positive. Your love, your care, your effort, your attention all make things better. Do not let the hard season convince you otherwise.", verse: "You are the salt of the earth.", ref: "Matthew 5:13" },
+  { text: "The love you give is extraordinary. Do not stop giving it, but remember you are also a recipient. Let the love that surrounds you actually land. You deserve to receive it.", verse: "Dear friends, let us love one another, for love comes from God.", ref: "1 John 4:7" },
+  { text: "Whatever has been taken from you, whatever has been lost, your capacity to hope, to love, and to begin again has not been touched. That capacity is still entirely yours.", verse: "He restores my soul.", ref: "Psalm 23:3" },
+  { text: "You are standing. After everything, you are still standing. That is not nothing. That is everything.", verse: "Therefore put on the full armor of God, so that when the day of evil comes, you may be able to stand your ground, and after you have done everything, to stand.", ref: "Ephesians 6:13" },
+  { text: "A job is a season of provision, not the definition of your value. What you bring to every room you walk into cannot be listed on a resume and cannot be taken away by any employer.", verse: "The Lord will open to you his good treasury, the heavens, to give the rain to your land in its season and to bless all the work of your hands.", ref: "Deuteronomy 28:12" },
+  { text: "The end of one chapter of work is the beginning of a search, and searches lead somewhere. You are not at a dead end. You are at a crossroads, and crossroads have roads.", verse: "I will instruct you and teach you in the way you should go; I will counsel you with my loving eye on you.", ref: "Psalm 32:8" },
+  { text: "Your skills, your experience, your character, the way you work and the way you treat people, none of that changed today. You are every bit as capable and valuable today as you were yesterday morning.", verse: "Whatever you do, work at it with all your heart, as working for the Lord, not for human masters.", ref: "Colossians 3:23" },
+  { text: "The people in your life did not choose you for your title. They chose you for you. Your relationships, your worth, your place in this world are entirely independent of your employment status.", verse: "Man looks at the outward appearance, but the Lord looks at the heart.", ref: "1 Samuel 16:7" },
+  { text: "There is provision ahead that you cannot yet see. The same faithfulness that brought you this far has not stopped. It is already working on what comes next, even now.", verse: "My God will meet all your needs according to the riches of his glory in Christ Jesus.", ref: "Philippians 4:19" }
+];
+
+var lastIndex = -1;
+
+function getEncouragement() {
+  var input = document.getElementById('userInput').value.trim();
+  if (!input) {
+    document.getElementById('userInput').focus();
+    document.getElementById('userInput').style.borderColor = 'rgba(201,169,110,0.6)';
+    setTimeout(function() { document.getElementById('userInput').style.borderColor = ''; }, 1500);
+    return;
+  }
+  showMessage(pickMessage());
+}
+
+function drawAnother() {
+  showMessage(pickMessage());
+}
+
+function pickMessage() {
+  var index;
+  do { index = Math.floor(Math.random() * messages.length); } while (index === lastIndex);
+  lastIndex = index;
+  return messages[index];
+}
+
+function showMessage(msg) {
+  var flipInner = document.getElementById('flipInner');
+  var responseText = document.getElementById('responseText');
+  var responseVerse = document.getElementById('responseVerse');
+
+  // If already flipped, briefly unflip, swap content, reflip
+  if (flipInner.classList.contains('flipped')) {
+    flipInner.classList.remove('flipped');
+    setTimeout(function() {
+      fillMessage(msg, responseText, responseVerse);
+      flipInner.classList.add('flipped');
+    }, 400);
+  } else {
+    fillMessage(msg, responseText, responseVerse);
+    setTimeout(function() { flipInner.classList.add('flipped'); }, 30);
+  }
+}
+
+function fillMessage(msg, textEl, verseEl) {
+  textEl.textContent = msg.text;
+  verseEl.innerHTML = '\u201C' + msg.verse + '\u201D<cite>' + msg.ref + '</cite>';
+}
+
+function reset() {
+  var flipInner = document.getElementById('flipInner');
+  flipInner.classList.remove('flipped');
+  setTimeout(function() {
+    document.getElementById('userInput').value = '';
+    document.getElementById('userInput').focus();
+  }, 500);
+  lastIndex = -1;
+}
+
+document.getElementById('userInput').addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { getEncouragement(); }
+});
+</script>
+</body>
+</html>
